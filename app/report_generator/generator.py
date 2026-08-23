@@ -197,7 +197,7 @@ class ReportGenerator:
                 "change": metrics.get("in_change_pct", "0%"),
             },
             {
-                "name": "Trouble Calls",
+                "name": "Fallas",
                 "value": str(metrics["tc_count"]),
                 "sparkline": charts.get("sparkline_tc"),
                 "trend": metrics.get("tc_trend", "flat"),
@@ -278,17 +278,17 @@ class ReportGenerator:
             SELECT
                 dia::date AS date,
                 CASE
-                    WHEN tipo IN ('Cambio de Domicilio','Cambio de Equipo',
-                                  'Cambio de Servicios','Cambio de Ubicacion',
+                    WHEN tipo IN ('Nuevo Servicio','Reemplazo Equipo',
+                                  'Modif. Plan','Cambio Direccion',
                                   'Instalacion')
                         THEN 'IN'
-                    WHEN tipo IN ('Trouble Call Telefonia','Trouble Call Cablemodem',
-                                  'Trouble Call Video','Trouble Call House Check',
-                                  'Trouble Call')
+                    WHEN tipo IN ('Falla Telefonia','Falla Internet',
+                                  'Falla Video','Verif. Domicilio',
+                                  'Falla General')
                         THEN 'TC'
-                    WHEN tipo = 'Reconexion Pago' THEN 'Rx'
-                    WHEN tipo = 'No Pago - Filtro de Video' THEN 'Dx'
-                    WHEN tipo = 'Recoleccion Acometida' THEN 'RA'
+                    WHEN tipo = 'Conexion' THEN 'Rx'
+                    WHEN tipo = 'Suspension Servicio' THEN 'Dx'
+                    WHEN tipo = 'Retiro Equipo' THEN 'RA'
                     ELSE 'Otro'
                 END AS metric,
                 COUNT(*) AS value
@@ -349,17 +349,17 @@ class ReportGenerator:
                 dia::date AS date,
                 hub,
                 CASE
-                    WHEN tipo IN ('Cambio de Domicilio','Cambio de Equipo',
-                                  'Cambio de Servicios','Cambio de Ubicacion',
+                    WHEN tipo IN ('Nuevo Servicio','Reemplazo Equipo',
+                                  'Modif. Plan','Cambio Direccion',
                                   'Instalacion')
                         THEN 'IN'
-                    WHEN tipo IN ('Trouble Call Telefonia','Trouble Call Cablemodem',
-                                  'Trouble Call Video','Trouble Call House Check',
-                                  'Trouble Call')
+                    WHEN tipo IN ('Falla Telefonia','Falla Internet',
+                                  'Falla Video','Verif. Domicilio',
+                                  'Falla General')
                         THEN 'TC'
-                    WHEN tipo = 'Reconexion Pago' THEN 'Rx'
-                    WHEN tipo = 'No Pago - Filtro de Video' THEN 'Dx'
-                    WHEN tipo = 'Recoleccion Acometida' THEN 'RA'
+                    WHEN tipo = 'Conexion' THEN 'Rx'
+                    WHEN tipo = 'Suspension Servicio' THEN 'Dx'
+                    WHEN tipo = 'Retiro Equipo' THEN 'RA'
                     ELSE 'Otro'
                 END AS metric,
                 COUNT(*) AS value
@@ -416,15 +416,15 @@ class ReportGenerator:
 
         sql = """
             SELECT
-                COUNT(*) FILTER (WHERE tipo IN ('Cambio de Domicilio','Cambio de Equipo',
-                                                 'Cambio de Servicios','Cambio de Ubicacion',
+                COUNT(*) FILTER (WHERE tipo IN ('Nuevo Servicio','Reemplazo Equipo',
+                                                 'Modif. Plan','Cambio Direccion',
                                                  'Instalacion')) AS in_count,
-                COUNT(*) FILTER (WHERE tipo IN ('Trouble Call Telefonia','Trouble Call Cablemodem',
-                                                 'Trouble Call Video','Trouble Call House Check',
-                                                 'Trouble Call')) AS tc_count,
-                COUNT(*) FILTER (WHERE tipo = 'Reconexion Pago') AS rx_count,
-                COUNT(*) FILTER (WHERE tipo = 'No Pago - Filtro de Video') AS dx_count,
-                COUNT(*) FILTER (WHERE tipo = 'Recoleccion Acometida') AS ra_count
+                COUNT(*) FILTER (WHERE tipo IN ('Falla Telefonia','Falla Internet',
+                                                 'Falla Video','Verif. Domicilio',
+                                                 'Falla General')) AS tc_count,
+                COUNT(*) FILTER (WHERE tipo = 'Conexion') AS rx_count,
+                COUNT(*) FILTER (WHERE tipo = 'Suspension Servicio') AS dx_count,
+                COUNT(*) FILTER (WHERE tipo = 'Retiro Equipo') AS ra_count
             FROM abiertas
             WHERE hub = ANY(%(hubs)s)
               AND dia::date = %(dia)s
@@ -468,15 +468,15 @@ class ReportGenerator:
         sql = """
             SELECT
                 hub,
-                COUNT(*) FILTER (WHERE tipo IN ('Cambio de Domicilio','Cambio de Equipo',
-                                                 'Cambio de Servicios','Cambio de Ubicacion',
+                COUNT(*) FILTER (WHERE tipo IN ('Nuevo Servicio','Reemplazo Equipo',
+                                                 'Modif. Plan','Cambio Direccion',
                                                  'Instalacion')) AS in_count,
-                COUNT(*) FILTER (WHERE tipo IN ('Trouble Call Telefonia','Trouble Call Cablemodem',
-                                                 'Trouble Call Video','Trouble Call House Check',
-                                                 'Trouble Call')) AS tc_count,
-                COUNT(*) FILTER (WHERE tipo = 'Reconexion Pago') AS rx_count,
-                COUNT(*) FILTER (WHERE tipo = 'No Pago - Filtro de Video') AS dx_count,
-                COUNT(*) FILTER (WHERE tipo = 'Recoleccion Acometida') AS ra_count
+                COUNT(*) FILTER (WHERE tipo IN ('Falla Telefonia','Falla Internet',
+                                                 'Falla Video','Verif. Domicilio',
+                                                 'Falla General')) AS tc_count,
+                COUNT(*) FILTER (WHERE tipo = 'Conexion') AS rx_count,
+                COUNT(*) FILTER (WHERE tipo = 'Suspension Servicio') AS dx_count,
+                COUNT(*) FILTER (WHERE tipo = 'Retiro Equipo') AS ra_count
             FROM abiertas
             WHERE hub = ANY(%(hubs)s)
               AND dia::date = %(dia)s
@@ -776,7 +776,7 @@ class ReportGenerator:
         if tc_trend == "up":
             insights.append(
                 f"TC aumentó {tc_pct} vs día anterior — "
-                "incremento en Trouble Calls que puede indicar problemas de calidad"
+                "incremento en Fallas que puede indicar problemas de calidad"
             )
         elif tc_trend == "down":
             insights.append(

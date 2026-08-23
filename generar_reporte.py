@@ -31,14 +31,14 @@ DB_CONFIG = {
 
 # Clasificación desde metrics.py
 TIPOS_IN = [
-    "Cambio de Domicilio", "Cambio de Equipo",
-    "Cambio de Servicios", "Cambio de Ubicacion", "Instalacion",
+    "Nuevo Servicio", "Reemplazo Equipo",
+    "Modif. Plan", "Cambio Direccion", "Instalacion",
 ]
 TIPOS_TC = [
-    "Trouble Call Telefonia", "Trouble Call Cablemodem",
-    "Trouble Call Video", "Trouble Call House Check", "Trouble Call",
+    "Falla Telefonia", "Falla Internet",
+    "Falla Video", "Verif. Domicilio", "Falla General",
 ]
-TIPO_RA = "Recoleccion Acometida"
+TIPO_RA = "Retiro Equipo"
 
 # ─── Paleta Monarch (ámbar/cian) ────────────────────────────────────
 COLORS = {

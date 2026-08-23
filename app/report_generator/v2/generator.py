@@ -38,7 +38,7 @@ class KpiCard:
     """One KPI card with current value, day-over-day change, and 7-day sparkline."""
 
     id: str  # "total" | "in" | "tc" | "ra"
-    name: str  # "Total IN+TC" | "Instalaciones" | "Trouble Calls" | "Recolección"
+    name: str  # "Total IN+TC" | "Instalaciones" | "Fallas" | "Retiros"
     value: int
     change_pct: str  # "+5.2%" | "-2.1%" | "--"
     trend: str  # "up" | "down" | "flat"
@@ -72,25 +72,25 @@ class ChartData:
 KPI_CATEGORIES: dict[str, dict] = {
     "total": {"name": "Total IN+TC", "tipos": ["IN", "TC"], "color": "#22d3ee", "bg": "#1a2122"},
     "in": {"name": "Instalaciones", "tipos": ["IN"], "color": "#fb923c", "bg": "#1a2122"},
-    "tc": {"name": "Trouble Calls", "tipos": ["TC"], "color": "#f87171", "bg": "#1a2122"},
-    "ra": {"name": "Recolección", "tipos": ["RA"], "color": "#c084fc", "bg": "#1a2122"},
+    "tc": {"name": "Fallas", "tipos": ["TC"], "color": "#f87171", "bg": "#1a2122"},
+    "ra": {"name": "Retiros", "tipos": ["RA"], "color": "#c084fc", "bg": "#1a2122"},
 }
 
 # ── Tipo Mapping ──────────────────────────────────────────────────────────────
 # Raw ``tipo`` values in ``abiertas`` → short metric codes.
 _TIPO_MAP_SQL = """
     CASE
-        WHEN tipo IN ('Cambio de Domicilio','Cambio de Equipo',
-                       'Cambio de Servicios','Cambio de Ubicacion',
+        WHEN tipo IN ('Nuevo Servicio','Reemplazo Equipo',
+                       'Modif. Plan','Cambio Direccion',
                        'Instalacion')
             THEN 'IN'
-        WHEN tipo IN ('Trouble Call Telefonia','Trouble Call Cablemodem',
-                       'Trouble Call Video','Trouble Call House Check',
-                       'Trouble Call')
+        WHEN tipo IN ('Falla Telefonia','Falla Internet',
+                       'Falla Video','Verif. Domicilio',
+                       'Falla General')
             THEN 'TC'
-        WHEN tipo = 'Reconexion Pago' THEN 'Rx'
-        WHEN tipo = 'No Pago - Filtro de Video' THEN 'Dx'
-        WHEN tipo = 'Recoleccion Acometida' THEN 'RA'
+        WHEN tipo = 'Conexion' THEN 'Rx'
+        WHEN tipo = 'Suspension Servicio' THEN 'Dx'
+        WHEN tipo = 'Retiro Equipo' THEN 'RA'
         ELSE 'Otro'
     END
 """
@@ -329,13 +329,13 @@ class ReportV2Generator:
                     ELSE '+30 dias'
                 END AS rango,
                 CASE
-                    WHEN tipo IN ('Cambio de Domicilio','Cambio de Equipo',
-                                  'Cambio de Servicios','Cambio de Ubicacion',
+                    WHEN tipo IN ('Nuevo Servicio','Reemplazo Equipo',
+                                  'Modif. Plan','Cambio Direccion',
                                   'Instalacion') THEN 'IN'
-                    WHEN tipo IN ('Trouble Call Telefonia','Trouble Call Cablemodem',
-                                  'Trouble Call Video','Trouble Call House Check',
-                                  'Trouble Call') THEN 'TC'
-                    WHEN tipo = 'Recoleccion Acometida' THEN 'RA'
+                    WHEN tipo IN ('Falla Telefonia','Falla Internet',
+                                  'Falla Video','Verif. Domicilio',
+                                  'Falla General') THEN 'TC'
+                    WHEN tipo = 'Retiro Equipo' THEN 'RA'
                     ELSE 'Otro'
                 END AS metric,
                 COUNT(*) AS count

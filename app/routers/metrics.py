@@ -48,30 +48,30 @@ DB_CONFIG = {
 # Clasificación de tipos de órdenes
 TIPO_CLASIFICACION = {
     # IN - Instalaciones
-    "Cambio de Domicilio": "IN",
-    "Cambio de Equipo": "IN",
-    "Cambio de Servicios": "IN",
-    "Cambio de Ubicacion": "IN",
+    "Nuevo Servicio": "IN",
+    "Reemplazo Equipo": "IN",
+    "Modif. Plan": "IN",
+    "Cambio Direccion": "IN",
     "Instalacion": "IN",
     # Rx - Reconexión
-    "Reconexion Pago": "Rx",
+    "Conexion": "Rx",
     # Dx - Desconexión
-    "No Pago - Filtro de Video": "Dx",
-    # RA - Recolección Acometida
-    "Recoleccion Acometida": "RA",
-    # TC - Trouble Call
-    "Trouble Call Telefonia": "TC",
-    "Trouble Call Cablemodem": "TC",
-    "Trouble Call Video": "TC",
-    "Trouble Call House Check": "TC",
-    "Trouble Call": "TC",
+    "Suspension Servicio": "Dx",
+    # RA - Retiro Equipo
+    "Retiro Equipo": "RA",
+    # TC - Falla General
+    "Falla Telefonia": "TC",
+    "Falla Internet": "TC",
+    "Falla Video": "TC",
+    "Verif. Domicilio": "TC",
+    "Falla General": "TC",
 }
 
 # Tipos IN y TC para queries
-TIPOS_IN = ["Cambio de Domicilio", "Cambio de Equipo", "Cambio de Servicios", 
-            "Cambio de Ubicacion", "Instalacion"]
-TIPOS_TC = ["Trouble Call Telefonia", "Trouble Call Cablemodem", 
-            "Trouble Call Video", "Trouble Call House Check", "Trouble Call"]
+TIPOS_IN = ["Nuevo Servicio", "Reemplazo Equipo", "Modif. Plan", 
+            "Cambio Direccion", "Instalacion"]
+TIPOS_TC = ["Falla Telefonia", "Falla Internet", 
+            "Falla Video", "Verif. Domicilio", "Falla General"]
 
 
 def clasificar_tipo(tipo: str) -> str:
@@ -473,13 +473,13 @@ def get_metrics_summary(
             query = """
                 SELECT 
                     COUNT(*) as total,
-                    SUM(CASE WHEN tipo IN ('Cambio de Domicilio', 'Cambio de Equipo', 
-                            'Cambio de Servicios', 'Cambio de Ubicacion', 'Instalacion') THEN 1 ELSE 0 END) as in_count,
-                    SUM(CASE WHEN tipo IN ('Trouble Call Telefonia', 'Trouble Call Cablemodem', 
-                            'Trouble Call Video', 'Trouble Call House Check', 'Trouble Call') THEN 1 ELSE 0 END) as tc_count,
-                    SUM(CASE WHEN tipo = 'Reconexion Pago' THEN 1 ELSE 0 END) as rx_count,
-                    SUM(CASE WHEN tipo = 'No Pago - Filtro de Video' THEN 1 ELSE 0 END) as dx_count,
-                    SUM(CASE WHEN tipo = 'Recoleccion Acometida' THEN 1 ELSE 0 END) as ra_count
+                    SUM(CASE WHEN tipo IN ('Nuevo Servicio', 'Reemplazo Equipo', 
+                            'Modif. Plan', 'Cambio Direccion', 'Instalacion') THEN 1 ELSE 0 END) as in_count,
+                    SUM(CASE WHEN tipo IN ('Falla Telefonia', 'Falla Internet', 
+                            'Falla Video', 'Verif. Domicilio', 'Falla General') THEN 1 ELSE 0 END) as tc_count,
+                    SUM(CASE WHEN tipo = 'Conexion' THEN 1 ELSE 0 END) as rx_count,
+                    SUM(CASE WHEN tipo = 'Suspension Servicio' THEN 1 ELSE 0 END) as dx_count,
+                    SUM(CASE WHEN tipo = 'Retiro Equipo' THEN 1 ELSE 0 END) as ra_count
                 FROM abiertas 
                 WHERE hub = %s AND hub IS NOT NULL AND hub != '' AND dia::date = %s
             """
@@ -502,13 +502,13 @@ def get_metrics_summary(
             SELECT 
                 hub,
                 COUNT(*) as total,
-                SUM(CASE WHEN tipo IN ('Cambio de Domicilio', 'Cambio de Equipo', 
-                        'Cambio de Servicios', 'Cambio de Ubicacion', 'Instalacion') THEN 1 ELSE 0 END) as in_count,
-                SUM(CASE WHEN tipo IN ('Trouble Call Telefonia', 'Trouble Call Cablemodem', 
-                        'Trouble Call Video', 'Trouble Call House Check', 'Trouble Call') THEN 1 ELSE 0 END) as tc_count,
-                SUM(CASE WHEN tipo = 'Reconexion Pago' THEN 1 ELSE 0 END) as rx_count,
-                SUM(CASE WHEN tipo = 'No Pago - Filtro de Video' THEN 1 ELSE 0 END) as dx_count,
-                SUM(CASE WHEN tipo = 'Recoleccion Acometida' THEN 1 ELSE 0 END) as ra_count
+                SUM(CASE WHEN tipo IN ('Nuevo Servicio', 'Reemplazo Equipo', 
+                        'Modif. Plan', 'Cambio Direccion', 'Instalacion') THEN 1 ELSE 0 END) as in_count,
+                SUM(CASE WHEN tipo IN ('Falla Telefonia', 'Falla Internet', 
+                        'Falla Video', 'Verif. Domicilio', 'Falla General') THEN 1 ELSE 0 END) as tc_count,
+                SUM(CASE WHEN tipo = 'Conexion' THEN 1 ELSE 0 END) as rx_count,
+                SUM(CASE WHEN tipo = 'Suspension Servicio' THEN 1 ELSE 0 END) as dx_count,
+                SUM(CASE WHEN tipo = 'Retiro Equipo' THEN 1 ELSE 0 END) as ra_count
             FROM abiertas 
             WHERE hub IS NOT NULL AND hub != '' AND dia::date = %s
             GROUP BY hub
@@ -663,9 +663,9 @@ def get_metrics_by_clasificacion(
             query = """
                 SELECT 
                     SUM(CASE WHEN tipo = ANY(%s) THEN 1 ELSE 0 END) as in_count,
-                    SUM(CASE WHEN tipo = 'Reconexion Pago' THEN 1 ELSE 0 END) as rx_count,
-                    SUM(CASE WHEN tipo = 'No Pago - Filtro de Video' THEN 1 ELSE 0 END) as dx_count,
-                    SUM(CASE WHEN tipo = 'Recoleccion Acometida' THEN 1 ELSE 0 END) as ra_count,
+                    SUM(CASE WHEN tipo = 'Conexion' THEN 1 ELSE 0 END) as rx_count,
+                    SUM(CASE WHEN tipo = 'Suspension Servicio' THEN 1 ELSE 0 END) as dx_count,
+                    SUM(CASE WHEN tipo = 'Retiro Equipo' THEN 1 ELSE 0 END) as ra_count,
                     SUM(CASE WHEN tipo = ANY(%s) THEN 1 ELSE 0 END) as tc_count,
                     COUNT(*) as total
                 FROM abiertas 
@@ -693,9 +693,9 @@ def get_metrics_by_clasificacion(
                 SELECT 
                     hub,
                     SUM(CASE WHEN tipo = ANY(%s) THEN 1 ELSE 0 END) as in_count,
-                    SUM(CASE WHEN tipo = 'Reconexion Pago' THEN 1 ELSE 0 END) as rx_count,
-                    SUM(CASE WHEN tipo = 'No Pago - Filtro de Video' THEN 1 ELSE 0 END) as dx_count,
-                    SUM(CASE WHEN tipo = 'Recoleccion Acometida' THEN 1 ELSE 0 END) as ra_count,
+                    SUM(CASE WHEN tipo = 'Conexion' THEN 1 ELSE 0 END) as rx_count,
+                    SUM(CASE WHEN tipo = 'Suspension Servicio' THEN 1 ELSE 0 END) as dx_count,
+                    SUM(CASE WHEN tipo = 'Retiro Equipo' THEN 1 ELSE 0 END) as ra_count,
                     SUM(CASE WHEN tipo = ANY(%s) THEN 1 ELSE 0 END) as tc_count,
                     COUNT(*) as total
                 FROM abiertas 
@@ -759,7 +759,7 @@ def get_rx_por_fecha(
                 SELECT fechaorden as fecha, COUNT(*) as total
                 FROM abiertas 
                 WHERE hub = %s AND hub IS NOT NULL AND hub != '' 
-                  AND dia::date = %s AND tipo = 'Reconexion Pago'
+                  AND dia::date = %s AND tipo = 'Conexion'
                   AND fechaorden IS NOT NULL
                 GROUP BY fechaorden ORDER BY fechaorden
             """
@@ -769,7 +769,7 @@ def get_rx_por_fecha(
                 SELECT fechaorden as fecha, COUNT(*) as total
                 FROM abiertas 
                 WHERE hub IS NOT NULL AND hub != '' 
-                  AND dia::date = %s AND tipo = 'Reconexion Pago'
+                  AND dia::date = %s AND tipo = 'Conexion'
                   AND fechaorden IS NOT NULL
                 GROUP BY fechaorden ORDER BY fechaorden
             """

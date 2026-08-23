@@ -35,18 +35,18 @@ DAYS = 120
 # (tipo, metric) — metric is what the report maps each type to.
 ORDER_TYPES: list[tuple[str, str]] = [
     ("Instalacion", "IN"),
-    ("Cambio de Domicilio", "IN"),
-    ("Cambio de Equipo", "IN"),
-    ("Cambio de Servicios", "IN"),
-    ("Cambio de Ubicacion", "IN"),
-    ("Trouble Call Telefonia", "TC"),
-    ("Trouble Call Cablemodem", "TC"),
-    ("Trouble Call Video", "TC"),
-    ("Trouble Call House Check", "TC"),
-    ("Trouble Call", "TC"),
-    ("Reconexion Pago", "Rx"),
-    ("No Pago - Filtro de Video", "Dx"),
-    ("Recoleccion Acometida", "RA"),
+    ("Nuevo Servicio", "IN"),
+    ("Reemplazo Equipo", "IN"),
+    ("Modif. Plan", "IN"),
+    ("Cambio Direccion", "IN"),
+    ("Falla Telefonia", "TC"),
+    ("Falla Internet", "TC"),
+    ("Falla Video", "TC"),
+    ("Verif. Domicilio", "TC"),
+    ("Falla General", "TC"),
+    ("Conexion", "Rx"),
+    ("Suspension Servicio", "Dx"),
+    ("Retiro Equipo", "RA"),
 ]
 
 # Relative weights per metric → realistic volume distribution.

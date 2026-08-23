@@ -944,7 +944,7 @@
         {% endif %}
         {% if avg_days.tc_avg is not none %}
         <div class="avg-days-metric">
-          <span class="avg-days-metric-label">Trouble Calls</span>
+          <span class="avg-days-metric-label">Fallas</span>
           <span class="avg-days-metric-value">{{ "%.1f"|format(avg_days.tc_avg) }}<span class="avg-days-unit">d</span></span>
           {% if avg_days.tc_trend is defined and avg_days.tc_change is not none %}
           <span class="avg-days-change-row {% if avg_days.tc_trend == 'up' %}change-up{% elif avg_days.tc_trend == 'down' %}change-down{% else %}change-flat{% endif %}">
