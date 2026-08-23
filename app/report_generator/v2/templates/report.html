@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Report — {{ period }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ── RESET ─────────────────────────────────────── */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* ── THEME TOKENS (Executive Dark Intelligence) ── */
+  :root {
+    --bg: #0e1416;
+    --surface: #1a2122;
+    --surface-low: #161d1e;
+    --surface-high: #242b2d;
+    --surface-highest: #2f3638;
+    --text-primary: #dde4e5;
+    --text-secondary: #bbc9cd;
+    --text-muted: #859397;
+    --border: #3c494c;
+    --primary: #8aebff;
+    --primary-container: #22d3ee;
+    --secondary: #ffb783;
+    --secondary-container: #fb923c;
+    --tertiary: #ffd2d0;
+    --tertiary-container: #f87171;
+    --accent-purple: #c084fc;
+    --radius: 8px;
+    --shadow: rgba(0, 0, 0, 0.4);
+  }
+
+  /* ── GLOBAL ─────────────────────────────────────── */
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .report-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.25rem;
+  }
+
+  /* ── HEADER ────────────────────────────────────── */
+  .report-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .report-header h1 {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 40px;
+  }
+  .report-header p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── KPI GRID (4 en línea) ─────────────────────── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .kpi-card {
+    border-radius: var(--radius);
+    padding: 1rem 0.875rem;
+    background: var(--surface-high);
+    box-shadow: 0 4px 12px var(--shadow);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .kpi-header-left {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .kpi-change {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .trend-up    { color: var(--primary-container); }
+  .trend-down  { color: var(--tertiary-container); }
+  .trend-flat  { color: var(--text-muted); }
+
+  .kpi-value {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 44px;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .kpi-sparkline {
+    width: 100%;
+    height: 28px;
+  }
+  .kpi-sparkline svg {
+    display: block;
+    width: 100%;
+    height: 28px;
+  }
+
+  /* ── SECOND ROW: Asignadas + Avg Days ── */
+  .second-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .second-row-card {
+    background: var(--surface-high);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 1.25rem 1rem;
+    box-shadow: 0 4px 12px var(--shadow);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .second-row-card .avg-days-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .second-row-card .avg-days-icon { font-size: 18px; line-height: 1; }
+  .second-row-card .avg-days-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .asignadas-value {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+  .asignadas-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .avg-days-metrics {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .avg-days-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 1;
+  }
+  .avg-days-metric-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .avg-days-metric-value {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+  .avg-days-unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+  .avg-days-change-row {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .avg-days-change-row.change-up { color: var(--tertiary-container); }
+  .avg-days-change-row.change-down { color: var(--primary-container); }
+  .avg-days-change-row.change-flat { color: var(--text-muted); }
+  .avg-days-divider {
+    width: 1px;
+    height: 60px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ── CHART SECTIONS ────────────────────────────── */
+  .chart-section {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  .chart-section.span-full {
+    grid-column: 1 / -1;
+  }
+  .chart-section + .chart-section {
+    margin-top: 16px;
+  }
+
+  .chart-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .chart-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  /* ── CHARTS GRID (2 cols) ──────────────────────── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  /* ── LEGEND ────────────────────────────────────── */
+  .chart-legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+    justify-content: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .legend-marker {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* ── SVG LINE CHART ────────────────────────────── */
+  .line-chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .line-chart-svg text {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 10px;
+  }
+
+  /* ── SINGLE-SERIES BAR CHART (RA) ──────────────── */
+  .bar-chart-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 200px;
+    padding: 0 8px;
+  }
+  .single-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .single-bar {
+    width: 40px;
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+  }
+  .single-bar-value {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .single-bar-label {
+    margin-top: 2px;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* ── STACKED 100% BAR CHART ────────────────── */
+  .stacked-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    height: 240px;
+    padding: 0 8px;
+  }
+  .stacked-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .stacked-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px 4px 0 0;
+    min-height: 4px;
+  }
+  .stacked-bar > .stacked-segment:first-child {
+    border-radius: 4px 4px 0 0;
+  }
+  .stacked-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 4px;
+    transition: opacity 0.2s;
+  }
+  .stacked-segment:hover { opacity: 0.8; }
+  .stacked-segment-val {
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .stacked-segment-val--out {
+    position: absolute;
+    left: 100%;
+    margin-left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: var(--text-secondary);
+  }
+  .stacked-label {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    white-space: nowrap;
+  }
+  .stacked-total {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+
+  /* ── GROUPED BAR CHART (fechaorden) ────────────── */
+  .chart-scroll-wrap {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+  }
+  .grouped-bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 220px;
+    padding: 16px 4px 0;
+    min-width: max-content;
+  }
+  .grouped-bar-group {
+    flex: 0 0 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    height: 100%;
+    position: relative;
+  }
+  .grouped-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    position: relative;
+  }
+  .grouped-bar {
+    width: 11px;
+    border-radius: 2px 2px 0 0;
+    min-height: 4px;
+  }
+  .grouped-bar-val {
+    font-size: 7px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 1px;
+    white-space: nowrap;
+  }
+  .grouped-labels-row {
+    display: flex;
+    gap: 2px;
+    padding: 2px 4px 0;
+    min-width: max-content;
+  }
+  .grouped-bar-label {
+    flex: 0 0 28px;
+    font-size: 7px;
+    color: var(--text-muted);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 1px;
+  }
+
+  /* ── HUB BARS GRID ─────────────────────────────── */
+  .hub-bars-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .hub-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 4px 12px var(--shadow);
+  }
+  .hub-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .hub-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .hub-bar-row:last-child {
+    margin-bottom: 0;
+  }
+  .hub-bar-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 28px;
+  }
+  .hub-bar-track {
+    flex: 1;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .hub-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    min-width: 2px;
+  }
+  .hub-bar-fill .hub-bar-value {
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+  .hub-bar-value-outside {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  /* ── FOOTER ────────────────────────────────────── */
+  .report-footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ── PRINT ─────────────────────────────────────── */
+  @media print {
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      height: auto;
+      overflow: visible;
+    }
+    .kpi-card,
+    .chart-section,
+    .hub-card {
+      break-inside: avoid;
+    }
+    .chart-scroll-wrap {
+      overflow: visible !important;
+    }
+  }
+
+  /* ── ALERTA CARD ────────────────────────────── */
+  .alerta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .alerta-card {
+    background: var(--surface-high);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 14px;
+    text-align: center;
+  }
+  .alerta-card.warning {
+    border-left: 4px solid var(--secondary-container);
+  }
+  .alerta-card.danger {
+    border-left: 4px solid var(--tertiary-container);
+  }
+  .alerta-card.success {
+    border-left: 4px solid var(--primary-container);
+  }
+  .alerta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .alerta-value {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+  .alerta-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .export-btn {
+    display: block;
+    margin: 0 auto 16px;
+    padding: 10px 24px;
+    background: #22d3ee;
+    color: #00363e;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .export-btn:hover { opacity: .85; }
+  .export-btn:disabled { opacity: .4; cursor: wait; }
+</style>
+</head>
+<body>
+<div class="report-container">
+
+  {# ── JINJA2 MACROS ──────────────────────────────── #}
+
+  {# sparkline: inline SVG polyline, 120×32, no axis/labels #}
+  {% macro sparkline(data, color) -%}
+    {%- if data and data|length > 0 -%}
+      {%- set n = data|length -%}
+      {%- set min_v = data|min -%}
+      {%- set max_v = data|max -%}
+      {%- set rng = max_v - min_v if max_v != min_v else 1 -%}
+      {%- set sw = 120 -%}
+      {%- set sh = 32 -%}
+      {%- set pt = 4 -%}
+      {%- set pb = 4 -%}
+      {%- set ph = sh - pt - pb -%}
+      {%- set div = n - 1 if n > 1 else 1 -%}
+      <svg width="{{ sw }}" height="{{ sh }}" viewBox="0 0 {{ sw }} {{ sh }}" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polyline
+          points="
+            {%- for i in range(n) -%}
+              {{ ((i * sw) / div) | round(1) }},{{ (pt + ph - ((data[i] - min_v) / rng * ph)) | round(1) }}
+              {%- if not loop.last %} {% endif -%}
+            {%- endfor -%}"
+          stroke="{{ color }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"
+        />
+      </svg>
+    {%- endif -%}
+  {%- endmacro %}
+
+  {# kpi_card: one metric card with value, trend, sparkline #}
+  {% macro kpi_card(id, name, value, change_pct, trend, sparkline_data, color, bg) -%}
+    <div class="kpi-card" style="background: {{ bg }}; border-top: 3px solid {{ color }};">
+      <div class="kpi-header">
+        <span class="kpi-header-left">{{ name }}</span>
+        <span class="kpi-change {% if trend == 'up' %}trend-up{% elif trend == 'down' %}trend-down{% else %}trend-flat{% endif %}">
+          {%- if trend == 'up' %}▲{% elif trend == 'down' %}▼{% else %}—{% endif -%}
+          {{ change_pct }}
+        </span>
+      </div>
+      <div class="kpi-value">{{ "{:,}".format(value) }}</div>
+      <div class="kpi-sparkline">
+        {{ sparkline(sparkline_data, color) }}
+      </div>
+    </div>
+  {%- endmacro %}
+
+  {# line_chart: SVG line chart with 2 series, Y grid, X labels #}
+  {% macro line_chart(data) -%}
+    {%- set labels = data.labels -%}
+    {%- set series = data.series -%}
+    {%- set n = labels|length -%}
+    {# compute global Y range #}
+    {%- set all_vals = [] -%}
+    {%- for s in series -%}
+      {%- for v in s['values'] -%}
+        {%- if all_vals.append(v) %}{% endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+    {%- set y_min = all_vals|min -%}
+    {%- set y_max = all_vals|max -%}
+    {%- set y_range = y_max - y_min if y_max != y_min else 1 -%}
+    {# SVG viewport constants #}
+    {%- set svg_w = 700 -%}
+    {%- set svg_h = 220 -%}
+    {%- set plot_l = 50 -%}
+    {%- set plot_t = 16 -%}
+    {%- set plot_w = 630 -%}
+    {%- set plot_h = 180 -%}
+    {%- set plot_b = plot_t + plot_h -%}
+    {%- set grid_lines = 5 -%}
+
+    <div class="chart-legend">
+      {%- for s in series -%}
+        <span class="legend-item">
+          <span class="legend-marker" style="color: {{ s.color }};">
+            {%- if s.get('marker') == 'triangle' %}▲{% else %}■{% endif -%}
+          </span>
+          {{ s.name }}
+        </span>
+      {%- endfor -%}
+    </div>
+
+    <svg class="line-chart-svg" viewBox="0 0 {{ svg_w }} {{ svg_h }}" preserveAspectRatio="xMidYMid meet">
+      {# Y-axis grid lines (sin labels) #}
+      {%- for gi in range(grid_lines + 1) -%}
+        {%- set y_val = y_min + (y_range * gi / grid_lines) -%}
+        {%- set y_pos = plot_b - (gi / grid_lines * plot_h) | round(1) -%}
+        <line x1="{{ plot_l }}" y1="{{ y_pos }}" x2="{{ plot_l + plot_w }}" y2="{{ y_pos }}" stroke="#30363D" stroke-width="1" />
+      {%- endfor -%}
+
+      {# X-axis labels — mm-dd, skip some when too many #}
+      {%- set skip = 1 if n <= 10 else (n / 5) | round(0) | int -%}
+      {%- for i in range(n) -%}
+        {%- if i % skip == 0 or i == n - 1 -%}
+        {%- set x_pos = plot_l + (i * plot_w / (n - 1 if n > 1 else 1)) -%}
+        {%- set raw = labels[i] -%}
+        {%- set label = raw[5:10] if raw.find('-') >= 0 else raw -%}
+        <text x="{{ x_pos }}" y="{{ plot_b + 16 }}" text-anchor="middle" fill="#6E7681" font-size="9">{{ label }}</text>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {# Series lines + markers + value labels #}
+      {%- for s in series -%}
+        {%- set series_idx = loop.index -%}
+        <polyline
+          points="
+            {%- for i in range(s['values']|length) -%}
+              {{ plot_l + (i * plot_w / (n - 1 if n > 1 else 1)) }},{{ plot_b - ((s['values'][i] - y_min) / y_range * plot_h) }}
+              {%- if not loop.last %} {% endif -%}
+            {%- endfor -%}"
+          stroke="{{ s.color }}" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"
+        />
+        {%- for i in range(s['values']|length) -%}
+          {%- set cx = plot_l + (i * plot_w / (n - 1 if n > 1 else 1)) -%}
+          {%- set cy = plot_b - ((s['values'][i] - y_min) / y_range * plot_h) -%}
+          {# Marker shape #}
+          {%- if s.get('marker') == 'triangle' -%}
+            <polygon points="{{ cx }},{{ cy - 5 }} {{ cx - 5 }},{{ cy + 4 }} {{ cx + 5 }},{{ cy + 4 }}" fill="{{ s.color }}" stroke="#0D1117" stroke-width="1.5" />
+          {%- else -%}
+            <rect x="{{ cx - 4 }}" y="{{ cy - 4 }}" width="8" height="8" rx="1" fill="{{ s.color }}" stroke="#0D1117" stroke-width="1.5" />
+          {%- endif -%}
+          {# Value label: first series above marker, second series below — avoids overlap #}
+          {%- set dy = -10 if series_idx == 1 else 16 -%}
+          <text x="{{ cx }}" y="{{ cy + dy }}" text-anchor="middle" fill="{{ s.color }}" font-size="9" font-weight="600">{{ "{:,}".format(s['values'][i]) }}</text>
+        {%- endfor -%}
+      {%- endfor -%}
+    </svg>
+  {%- endmacro %}
+
+  {# bar_chart_grouped: grouped bars (fechaorden) — categories + series #}
+  {% macro bar_chart_grouped(categories, series) -%}
+    {%- set all_vals = [] -%}
+    {%- for s in series -%}
+      {%- for v in s['values'] -%}
+        {%- if all_vals.append(v) %}{% endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+    {%- set max_val = all_vals|max or 1 -%}
+    <div class="chart-scroll-wrap">
+      <div class="grouped-bar-chart">
+        {%- for ci in range(categories|length) -%}
+          <div class="grouped-bar-group">
+            {%- for s in series -%}
+              {%- set bar_h = (s['values'][ci] / max_val * 180) | round(1) -%}
+              <div class="grouped-bar-wrap">
+                <span class="grouped-bar-val">{{ "{:,}".format(s['values'][ci]) }}</span>
+                <div class="grouped-bar" style="height: {{ [bar_h, 4] | max }}px; background: {{ s.color }};" title="{{ s.name }}: {{ s['values'][ci] }}"></div>
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+      <div class="grouped-labels-row">
+        {%- for ci in range(categories|length) -%}
+          <div class="grouped-bar-label">
+            {%- set raw = categories[ci] -%}
+            {%- set label = raw[5:] if raw.find('-') >= 0 and raw|length > 10 else raw -%}
+            {{ label }}
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endmacro %}
+
+  {# stacked_bar_100: stacked 100% bar chart — categories x series #}
+  {% macro stacked_bar_100(categories, series, totals) -%}
+    <div class="stacked-chart">
+      {%- for ci in range(categories|length) -%}
+        {%- set tot = totals[ci] -%}
+        {%- set bar_h = 180 if tot > 0 else 4 -%}
+        <div class="stacked-group">
+          <div class="stacked-total">{{ "{:,}".format(tot) }}</div>
+          <div class="stacked-bar" style="height: {{ bar_h }}px;">
+            {%- if tot > 0 -%}
+              {%- for s in series -%}
+                {%- set pct = (s['values'][ci] / tot * 100) | round(1) -%}
+                {%- if pct > 0 -%}
+                  <div class="stacked-segment" style="height: {{ pct }}%; background: {{ s.color }};">
+                    {%- if pct >= 6 -%}
+                      <span class="stacked-segment-val">{{ "{:,}".format(s['values'][ci]) }}</span>
+                    {%- else -%}
+                      <span class="stacked-segment-val stacked-segment-val--out">{{ "{:,}".format(s['values'][ci]) }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+          {%- set raw = categories[ci] -%}
+          <div class="stacked-label">{{ raw }}</div>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endmacro %}
+
+  {# hub_bars: horizontal bar chart for one hub #}
+  {% macro hub_bars(hub_name, categories, values, colors, max_val) -%}
+    <div class="hub-card">
+      <h3 class="hub-title">{{ hub_name }}</h3>
+      {%- for cat in categories -%}
+        {%- set val = values[cat] -%}
+        {%- set w = (val / max_val * 100) | round(1) if val > 0 else 0 -%}
+        <div class="hub-bar-row">
+          <span class="hub-bar-label">{{ cat }}</span>
+          <div class="hub-bar-track">
+            {%- if val > 0 -%}
+              <div class="hub-bar-fill" style="width: {{ w }}%; background: {{ colors[cat] }};">
+                {%- if w >= 14 -%}
+                  <span class="hub-bar-value">{{ "{:,}".format(val) }}</span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+          {%- if val > 0 and w < 14 -%}
+            <span class="hub-bar-value-outside">{{ "{:,}".format(val) }}</span>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endmacro %}
+
+  {# ── PAGE CONTENT ───────────────────────────────── #}
+
+  {# HEADER #}
+  <button class="export-btn" onclick="exportPNG()" id="exportBtn" style="display:block;margin:0 auto 16px;">📷 Exportar PNG</button>
+  <header class="report-header">
+    <h1>Reporte de OS abiertas — {{ report_date }}</h1>
+  </header>
+
+  {# KPI GRID #}
+  {% if kpis %}
+  <section class="kpi-grid">
+    {%- for kpi in kpis -%}
+      {{ kpi_card(kpi.id, kpi.name, kpi.value, kpi.change_pct, kpi.trend, kpi.sparkline_data, kpi.color, kpi.bg) }}
+    {%- endfor -%}
+  </section>
+  {% endif %}
+
+  {# SECOND ROW: IN Asignadas | TC Asignadas | Antigüedad Promedio #}
+  {% if (asignadas and (asignadas.in_total > 0 or asignadas.tc_total > 0)) or (avg_days and (avg_days.in_avg is not none or avg_days.tc_avg is not none)) %}
+  <section class="second-row">
+    {# IN Asignadas #}
+    {% if asignadas and asignadas.in_total > 0 %}
+    <div class="second-row-card" style="border-top:3px solid #fb923c;">
+      <div class="avg-days-title-row">
+        <span class="avg-days-title">IN Asignadas</span>
+      </div>
+      <div class="asignadas-value">{{ "{:,}".format(asignadas.in_asignadas) }}</div>
+      <div class="asignadas-pct">{{ "%.1f"|format(asignadas.in_pct) }}%</div>
+    </div>
+    {% elif asignadas is defined %}
+    <div class="second-row-card" style="border-top:3px solid #fb923c;">
+      <div class="avg-days-title-row">
+        <span class="avg-days-title">IN Asignadas</span>
+      </div>
+      <div class="asignadas-value">0</div>
+      <div class="asignadas-pct">—</div>
+    </div>
+    {% endif %}
+
+    {# TC Asignadas #}
+    {% if asignadas and asignadas.tc_total > 0 %}
+    <div class="second-row-card" style="border-top:3px solid #f87171;">
+      <div class="avg-days-title-row">
+        <span class="avg-days-title">TC Asignadas</span>
+      </div>
+      <div class="asignadas-value">{{ "{:,}".format(asignadas.tc_asignadas) }}</div>
+      <div class="asignadas-pct">{{ "%.1f"|format(asignadas.tc_pct) }}%</div>
+    </div>
+    {% elif asignadas is defined %}
+    <div class="second-row-card" style="border-top:3px solid #f87171;">
+      <div class="avg-days-title-row">
+        <span class="avg-days-title">TC Asignadas</span>
+      </div>
+      <div class="asignadas-value">0</div>
+      <div class="asignadas-pct">—</div>
+    </div>
+    {% endif %}
+
+    {# Antigüedad Promedio #}
+    {% if avg_days and (avg_days.in_avg is not none or avg_days.tc_avg is not none) %}
+    <div class="second-row-card">
+      <div class="avg-days-title-row">
+        <span class="avg-days-icon">⏱</span>
+        <span class="avg-days-title">Antigüedad promedio</span>
+      </div>
+      <div class="avg-days-metrics">
+        {% if avg_days.in_avg is not none %}
+        <div class="avg-days-metric">
+          <span class="avg-days-metric-label">Instalaciones</span>
+          <span class="avg-days-metric-value">{{ "%.1f"|format(avg_days.in_avg) }}<span class="avg-days-unit">d</span></span>
+          {% if avg_days.in_trend is defined and avg_days.in_change is not none %}
+          <span class="avg-days-change-row {% if avg_days.in_trend == 'up' %}change-up{% elif avg_days.in_trend == 'down' %}change-down{% else %}change-flat{% endif %}">
+            {%- if avg_days.in_trend == 'up' %}▲{% elif avg_days.in_trend == 'down' %}▼{% else %}—{% endif %}
+            {%- if avg_days.in_change > 0 %}+{% endif %}{{ "%.1f"|format(avg_days.in_change) }}
+          </span>
+          {% endif %}
+        </div>
+        {% endif %}
+        {% if avg_days.in_avg is not none and avg_days.tc_avg is not none %}
+        <div class="avg-days-divider"></div>
+        {% endif %}
+        {% if avg_days.tc_avg is not none %}
+        <div class="avg-days-metric">
+          <span class="avg-days-metric-label">Trouble Calls</span>
+          <span class="avg-days-metric-value">{{ "%.1f"|format(avg_days.tc_avg) }}<span class="avg-days-unit">d</span></span>
+          {% if avg_days.tc_trend is defined and avg_days.tc_change is not none %}
+          <span class="avg-days-change-row {% if avg_days.tc_trend == 'up' %}change-up{% elif avg_days.tc_trend == 'down' %}change-down{% else %}change-flat{% endif %}">
+            {%- if avg_days.tc_trend == 'up' %}▲{% elif avg_days.tc_trend == 'down' %}▼{% else %}—{% endif %}
+            {%- if avg_days.tc_change > 0 %}+{% endif %}{{ "%.1f"|format(avg_days.tc_change) }}
+          </span>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {# CHART ROW 1: Evolución del Backlog IN vs TC #}
+  {% if chart_backlog_evol and chart_backlog_evol['series'] %}
+  <div class="chart-section" style="margin-top:0;">
+    <h3 class="chart-title">Evolución del Backlog — IN vs TC</h3>
+    <p class="chart-subtitle">IN vs TC abiertas por día — excluye Recolecciones (últimos 23 días)</p>
+    {{ line_chart(chart_backlog_evol) }}
+  </div>
+  {% endif %}
+
+  {# CHART ROW 2: Hub bars (full-width) #}
+  {% if chart_hub and chart_hub['hubs'] %}
+    {%- set all_hub_values = [] -%}
+    {%- for hn in chart_hub['hubs'] -%}
+      {%- for cat in chart_hub['categories'] -%}
+        {%- if all_hub_values.append(chart_hub['values'][hn][cat]) %}{% endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+    {%- set max_hub_val = (all_hub_values | max) or 1 -%}
+    <div class="chart-section" style="margin-top:16px;">
+      <h3 class="chart-title">Órdenes por Hub — {{ report_date }}</h3>
+      <div class="hub-bars-grid" style="margin-bottom:0;">
+        {%- for hn in chart_hub['hubs'] -%}
+          {{ hub_bars(hn, chart_hub['categories'], chart_hub['values'][hn], chart_hub['colors'], max_hub_val) }}
+        {%- endfor -%}
+      </div>
+    </div>
+  {% endif %}
+
+  {# CHART ROW 3: Backlog Aging — composición por rango de antigüedad #}
+  {% if chart_backlog_aging and chart_backlog_aging['series'] %}
+  <div class="chart-section">
+    <h3 class="chart-title">Radiografía del Backlog</h3>
+    <p class="chart-subtitle">Composición del backlog por antigüedad — IN / TC / RA</p>
+    <div class="chart-legend">
+      {%- for s in chart_backlog_aging['series'] -%}
+        <span class="legend-item">
+          <span class="legend-marker" style="color: {{ s.color }};">■</span>
+          {{ s.name }}
+        </span>
+      {%- endfor -%}
+    </div>
+    {{ stacked_bar_100(chart_backlog_aging['categories'], chart_backlog_aging['series'], chart_backlog_aging['totals']) }}
+  </div>
+  {% endif %}
+
+
+
+  {# FOOTER #}
+  <footer class="report-footer"></footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+function exportPNG() {
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generando PNG...';
+  btn.style.display = 'none';
+
+  html2canvas(document.querySelector('.report-container'), {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#0e1416',
+    allowTaint: false,
+    logging: false,
+  }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = `reporte-ejecutivo-${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    btn.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '📷 Exportar PNG';
+  }).catch(() => {
+    btn.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '📷 Exportar PNG';
+    alert('Error al exportar. Probá con captura de pantalla.');
+  });
+}
+</script>
+</body>
+</html>

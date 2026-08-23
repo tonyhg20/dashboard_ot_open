@@ -1,0 +1,16 @@
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td style="padding: 24px 32px; border-top: 1px solid #E5E7EB;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="font-size: 11px; color: #9CA3AF;">
+            Reporte generado automáticamente · {{ generated_at }}
+          </td>
+          <td style="text-align: right; font-size: 11px; color: #9CA3AF;">
+            OS Open · {% if hubs %}{{ hubs | join(" · ") }}{% endif %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

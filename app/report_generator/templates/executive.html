@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ report_title }} — {{ period_label }}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #F9FAFB; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+
+<!-- Outlook: force 600px table -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #F9FAFB;">
+<tr><td align="center" style="padding: 40px 20px;">
+
+  <!-- Main container -->
+  <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #FFFFFF; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06);">
+
+    <!-- Header -->
+    <tr><td style="padding: 0;">
+      {% include "partials/header.html" %}
+    </td></tr>
+
+    <!-- KPI Row -->
+    <tr><td style="padding: 0 32px 32px;">
+      {% include "partials/kpi_row.html" %}
+    </td></tr>
+
+    <!-- Trend Chart -->
+    {% if charts.trend %}
+    <tr><td style="padding: 0 32px 32px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding-bottom: 8px;">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827; letter-spacing: -0.02em;">Órdenes por categoría</h2>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #6B7280;">Evolución diaria — últimas 24 horas resaltadas</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            <img src="{{ charts.trend }}" alt="Trend chart" width="536" style="display: block; max-width: 100%; height: auto; border-radius: 8px;">
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+    {% endif %}
+
+    <!-- Hub Daily TC Chart -->
+    {% if charts.hub_daily %}
+    <tr><td style="padding: 0 32px 32px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding-bottom: 8px;">
+            <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: #111827; letter-spacing: -0.02em;">Trouble Calls por hub</h2>
+            <p style="margin: 4px 0 0; font-size: 13px; color: #6B7280;">Comparativa diaria ZAP vs VIL</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            <img src="{{ charts.hub_daily }}" alt="Hub daily TC" width="536" style="display: block; max-width: 100%; height: auto; border-radius: 8px;">
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+    {% endif %}
+
+    <!-- Two-column section: Distribution + Comparison -->
+    {% if charts.distribution or charts.comparison %}
+    <tr><td style="padding: 0 32px 32px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          {% if charts.distribution %}
+          <td width="50%" style="vertical-align: top; padding-right: 12px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding-bottom: 8px;">
+                  <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #111827; letter-spacing: -0.02em;">Distribución</h3>
+                  <p style="margin: 2px 0 0; font-size: 11px; color: #6B7280;">Categoría, hoy</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align: center;">
+                  <img src="{{ charts.distribution }}" alt="Distribution" width="260" style="display: block; max-width: 100%; height: auto; border-radius: 8px;">
+                </td>
+              </tr>
+            </table>
+          </td>
+          {% endif %}
+          {% if charts.comparison %}
+          <td width="50%" style="vertical-align: top; padding-left: 12px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding-bottom: 8px;">
+                  <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #111827; letter-spacing: -0.02em;">Por hub</h3>
+                  <p style="margin: 2px 0 0; font-size: 11px; color: #6B7280;">ZAP vs VIL</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align: center;">
+                  <img src="{{ charts.comparison }}" alt="Hub comparison" width="260" style="display: block; max-width: 100%; height: auto; border-radius: 8px;">
+                </td>
+              </tr>
+            </table>
+          </td>
+          {% endif %}
+        </tr>
+      </table>
+    </td></tr>
+    {% endif %}
+
+    <!-- Insights -->
+    {% if insights %}
+    <tr><td style="padding: 0 32px 32px;">
+      {% include "partials/insights.html" %}
+    </td></tr>
+    {% endif %}
+
+    <!-- Footer -->
+    <tr><td style="padding: 0;">
+      {% include "partials/footer.html" %}
+    </td></tr>
+
+  </table>
+
+</td></tr>
+</table>
+
+</body>
+</html>

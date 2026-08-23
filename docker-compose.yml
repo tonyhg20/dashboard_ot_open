@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # PostgreSQL — demo database (created and seeded with fictional data)
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME:-abiertas}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASS:-changeme}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - os-network
+
+  # Seed — one-shot: creates tables and inserts fictional demo data
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    command: python scripts/seed_demo.py
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-abiertas}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASS=${DB_PASS:-changeme}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - os-network
+
+  # Backend - FastAPI
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-abiertas}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASS=${DB_PASS:-changeme}
+    depends_on:
+      db:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - os-network
+
+  # Frontend - Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=/api
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=/api
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - os-network
+
+volumes:
+  db_data:
+
+networks:
+  os-network:
+    driver: bridge

@@ -1,0 +1,29 @@
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    {% for kpi in kpis %}
+    <td width="25%" style="vertical-align: top; padding: {% if loop.first %}0{% else %}0 0 0 12px{% endif %};">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #F9FAFB; border-radius: 8px;">
+        <tr>
+          <td style="padding: 16px;">
+            <div style="font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px;">
+              {{ kpi.name }}
+            </div>
+            <div style="font-size: 28px; font-weight: 800; color: #111827; letter-spacing: -0.03em; line-height: 1.1;">
+              {{ kpi.value }}
+            </div>
+            {% if kpi.sparkline %}
+            <div style="margin-top: 8px;">
+              <img src="{{ kpi.sparkline }}" alt="{{ kpi.name }} trend" width="110" height="28" style="display: block; max-width: 100%; height: auto;">
+            </div>
+            {% endif %}
+            <div style="margin-top: 6px; font-size: 11px; font-weight: 600; color: {% if kpi.trend == 'up' %}#059669{% elif kpi.trend == 'down' %}#DC2626{% else %}#6B7280{% endif %};">
+              {% if kpi.trend == 'up' %}▲{% elif kpi.trend == 'down' %}▼{% else %}—{% endif %}
+              {{ kpi.change }}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </td>
+    {% endfor %}
+  </tr>
+</table>

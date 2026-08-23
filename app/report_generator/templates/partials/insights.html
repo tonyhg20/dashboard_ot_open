@@ -1,0 +1,18 @@
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #F9FAFB; border-radius: 8px;">
+  <tr>
+    <td style="padding: 20px;">
+      <div style="font-size: 13px; font-weight: 700; color: #111827; letter-spacing: -0.02em; margin-bottom: 12px;">
+        Lo más relevante
+      </div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+        {% for insight in insights %}
+        <tr>
+          <td style="padding: 4px 0; font-size: 13px; color: #374151; line-height: 1.4;">
+            • {{ insight }}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MONARCH_NEXUS_V.4 | ARCTIC_SURVEILLANCE_DASHBOARD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#00C0FF","secondary": "#FF0040","tertiary": "#00FF80","surface": "#020617","surface-container": "#080e1e",
+                        "surface-container-low": "#0b1224",
+                        "surface-container-high": "#121b33",
+                        "background": "#020617",
+                        "on-surface": "#e2e8f0",
+                        "outline": "#1e293b",
+                        "error": "#FF0040"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Space Grotesk"],
+                        "label": ["Space Grotesk"]
+                    },
+                    "boxShadow": {
+                        "neon-cyan": "0 0 15px rgba(0, 192, 255, 0.4)",
+                        "neon-magenta": "0 0 15px rgba(255, 0, 64, 0.4)",
+                        "neon-lime": "0 0 15px rgba(0, 255, 128, 0.4)"
+                    }
+                },
+            }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                background-color: #020617;
+                background-image: radial-gradient(circle at 2px 2px, rgba(0, 192, 255, 0.08) 1px, transparent 0);
+                background-size: 40px 40px;
+                color: #e2e8f0;
+                overflow-x: hidden;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 192, 255, 0.15), transparent);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: -100px; }
+            100% { top: 100vh; }
+        }
+        .glitch-edge-cyan {
+            position: relative;
+            border: 1px solid rgba(0, 192, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 192, 255, 0.1);
+        }
+        .glitch-edge-cyan::before {
+            content: ""; position: absolute; top: -1px; left: -1px; width: 12px; height: 12px;
+            border-top: 2px solid #00C0FF; border-left: 2px solid #00C0FF;
+            filter: drop-shadow(0 0 5px #00C0FF);
+        }
+        .glitch-edge-cyan::after {
+            content: ""; position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px;
+            border-bottom: 2px solid #00C0FF; border-right: 2px solid #00C0FF;
+            filter: drop-shadow(0 0 5px #00C0FF);
+        }
+        .glitch-edge-magenta {
+            position: relative;
+            border: 1px solid rgba(255, 0, 64, 0.3);
+            box-shadow: 0 0 10px rgba(255, 0, 64, 0.1);
+        }
+        .glitch-edge-magenta::before {
+            content: ""; position: absolute; top: -1px; left: -1px; width: 12px; height: 12px;
+            border-top: 2px solid #FF0040; border-left: 2px solid #FF0040;
+            filter: drop-shadow(0 0 5px #FF0040);
+        }
+        .glitch-edge-magenta::after {
+            content: ""; position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px;
+            border-bottom: 2px solid #FF0040; border-right: 2px solid #FF0040;
+            filter: drop-shadow(0 0 5px #FF0040);
+        }
+        .glitch-edge-lime {
+            position: relative;
+            border: 1px solid rgba(0, 255, 128, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.1);
+        }
+        .glitch-edge-lime::before {
+            content: ""; position: absolute; top: -1px; left: -1px; width: 12px; height: 12px;
+            border-top: 2px solid #00FF80; border-left: 2px solid #00FF80;
+            filter: drop-shadow(0 0 5px #00FF80);
+        }
+        .glitch-edge-lime::after {
+            content: ""; position: absolute; bottom: -1px; right: -1px; width: 12px; height: 12px;
+            border-bottom: 2px solid #00FF80; border-right: 2px solid #00FF80;
+            filter: drop-shadow(0 0 5px #00FF80);
+        }
+        .radar-pulse {
+            animation: pulse 2s ease-out infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .sweep {
+            animation: rotate 4s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary selection:text-black">
+<header class="bg-slate-950/90 backdrop-blur-md flex justify-between items-center w-full px-6 h-16 border-b border-primary/30 fixed top-0 z-50 shadow-[0_5px_20px_rgba(0,192,255,0.2)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-black text-primary tracking-[0.2em] italic font-['Space_Grotesk'] uppercase drop-shadow-[0_0_8px_#00C0FF]">MONARCH_NEXUS_V.4</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-primary border-b-2 border-primary pb-1 font-['Space_Grotesk'] uppercase tracking-tighter font-bold drop-shadow-[0_0_5px_#00C0FF]" href="#">STRAT-MAP</a>
+<a class="text-slate-400 hover:text-secondary transition-colors font-['Space_Grotesk'] uppercase tracking-tighter font-bold" href="#">BIO-SIGN</a>
+<a class="text-slate-400 hover:text-tertiary transition-colors font-['Space_Grotesk'] uppercase tracking-tighter font-bold" href="#">RADAR</a>
+<a class="text-slate-400 hover:text-primary transition-colors font-['Space_Grotesk'] uppercase tracking-tighter font-bold" href="#">LOGS</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex flex-col items-end mr-4">
+<span class="text-[10px] font-mono text-primary tracking-widest uppercase">COORDS: 34.0522° N, 118.2437° W</span>
+<span class="text-[10px] font-mono text-slate-400">SIGNAL_STRENGTH: <span class="text-tertiary">98.4%</span></span>
+</div>
+<div class="flex gap-4">
+<button class="text-slate-400 hover:text-primary transition-colors"><span class="material-symbols-outlined">terminal</span></button>
+<button class="text-slate-400 hover:text-secondary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-slate-400 hover:text-tertiary transition-colors"><span class="material-symbols-outlined">settings</span></button>
+</div>
+</div>
+</header>
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col border-r border-primary/20 bg-slate-950 hidden md:flex">
+<div class="p-6 border-b border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary/10 border border-primary flex items-center justify-center shadow-[0_0_10px_rgba(0,192,255,0.3)]">
+<span class="material-symbols-outlined text-primary">shield</span>
+</div>
+<div>
+<h3 class="text-primary font-mono text-xs tracking-widest uppercase">SECTOR_07</h3>
+<p class="text-tertiary text-[10px] font-bold">STATUS: ACTIVE</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 py-4">
+<a class="bg-primary/10 text-primary border-l-4 border-primary py-4 px-6 flex items-center gap-3 font-['Space_Grotesk'] text-xs font-mono tracking-widest uppercase drop-shadow-[0_0_5px_#00C0FF]" href="#">
+<span class="material-symbols-outlined">analytics</span> TELEMETRY
+        </a>
+<a class="text-slate-500 py-4 px-6 flex items-center gap-3 hover:bg-primary/5 hover:text-primary transition-all duration-150 ease-in-out hover:pl-8 font-['Space_Grotesk'] text-xs font-mono tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined">location_on</span> COORDINATES
+        </a>
+<a class="text-slate-500 py-4 px-6 flex items-center gap-3 hover:bg-secondary/5 hover:text-secondary transition-all duration-150 ease-in-out hover:pl-8 font-['Space_Grotesk'] text-xs font-mono tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined">warning</span> THREAT_LEVEL
+        </a>
+<a class="text-slate-500 py-4 px-6 flex items-center gap-3 hover:bg-tertiary/5 hover:text-tertiary transition-all duration-150 ease-in-out hover:pl-8 font-['Space_Grotesk'] text-xs font-mono tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined">memory</span> SYSTEM_RESOURCES
+        </a>
+<a class="text-slate-500 py-4 px-6 flex items-center gap-3 hover:bg-primary/5 hover:text-primary transition-all duration-150 ease-in-out hover:pl-8 font-['Space_Grotesk'] text-xs font-mono tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined">security</span> ENCRYPTED_COMMS
+        </a>
+</nav>
+<div class="mt-auto p-4 border-t border-primary/10">
+<a class="text-slate-500 py-4 px-6 flex items-center gap-3 hover:text-error transition-colors font-['Space_Grotesk'] text-xs font-mono tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined">power_settings_new</span> LOGOUT
+        </a>
+</div>
+</aside>
+<main class="md:ml-64 pt-24 px-6 pb-12">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-surface-container-low p-5 glitch-edge-cyan relative overflow-hidden group shadow-neon-cyan">
+<div class="flex justify-between items-start mb-4">
+<div class="flex flex-col">
+<span class="text-[10px] font-mono text-primary uppercase tracking-[0.2em]">ENERGY_LEVEL</span>
+<span class="text-3xl font-bold text-white tracking-tighter drop-shadow-[0_0_8px_#00C0FF]">84.2%</span>
+</div>
+<span class="material-symbols-outlined text-primary">bolt</span>
+</div>
+<div class="flex items-end gap-1 h-12">
+<div class="bg-primary/40 w-full h-[60%]"></div>
+<div class="bg-primary/60 w-full h-[80%]"></div>
+<div class="bg-primary/40 w-full h-[70%]"></div>
+<div class="bg-primary/80 w-full h-[90%]"></div>
+<div class="bg-primary/70 w-full h-[85%]"></div>
+<div class="bg-primary w-full h-[100%] shadow-[0_0_15px_#00C0FF]"></div>
+<div class="bg-slate-800 w-full h-[40%]"></div>
+<div class="bg-slate-800 w-full h-[20%]"></div>
+</div>
+<div class="absolute bottom-1 right-1">
+<span class="text-[8px] font-mono text-slate-500">MK-VI_CORE_PRIMARY</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 glitch-edge-lime relative overflow-hidden shadow-neon-lime">
+<div class="flex justify-between items-start mb-4">
+<div class="flex flex-col">
+<span class="text-[10px] font-mono text-tertiary uppercase tracking-[0.2em]">SCAN_RADIUS</span>
+<span class="text-3xl font-bold text-white tracking-tighter drop-shadow-[0_0_8px_#00FF80]">1,240 <span class="text-sm font-normal text-slate-400">KM</span></span>
+</div>
+<span class="material-symbols-outlined text-tertiary">radar</span>
+</div>
+<div class="w-full bg-slate-900 h-2 mt-4 relative">
+<div class="absolute top-0 left-0 h-full bg-tertiary shadow-[0_0_12px_#00FF80]" style="width: 65%;"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="text-[8px] font-mono text-slate-500">MIN_R: 200</span>
+<span class="text-[8px] font-mono text-slate-500">MAX_R: 4500</span>
+</div>
+<div class="absolute top-1 right-1 opacity-10">
+<span class="material-symbols-outlined text-tertiary text-6xl">satellite_alt</span>
+</div>
+</div>
+<div class="bg-surface-container-low p-5 glitch-edge-magenta relative overflow-hidden shadow-neon-magenta">
+<div class="flex justify-between items-start mb-4">
+<div class="flex flex-col">
+<span class="text-[10px] font-mono text-secondary uppercase tracking-[0.2em]">THREAT_INDEX</span>
+<span class="text-3xl font-bold text-white tracking-tighter drop-shadow-[0_0_8px_#FF0040]">LEVEL_04</span>
+</div>
+<span class="material-symbols-outlined text-secondary">warning</span>
+</div>
+<div class="grid grid-cols-5 gap-1 mt-6">
+<div class="h-1.5 bg-secondary shadow-[0_0_5px_#FF0040]"></div>
+<div class="h-1.5 bg-secondary shadow-[0_0_5px_#FF0040]"></div>
+<div class="h-1.5 bg-secondary shadow-[0_0_5px_#FF0040]"></div>
+<div class="h-1.5 bg-secondary shadow-[0_0_10px_#FF0040]"></div>
+<div class="h-1.5 bg-slate-800"></div>
+</div>
+<p class="text-[10px] font-mono text-secondary mt-2 uppercase font-bold">Warning: Sector Alpha detected anomaly</p>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+<div class="lg:col-span-3 bg-surface-container border border-primary/30 relative overflow-hidden min-h-[500px] shadow-[inset_0_0_50px_rgba(0,192,255,0.05)]">
+<div class="absolute inset-0 z-0 opacity-40">
+<img class="w-full h-full object-cover grayscale contrast-150 brightness-75" data-alt="high resolution satellite view of a futuristic city at night with dense glowing neon street grids and blue lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANfKZmBAs8nEfT4IRtNs76bsewVRmH7WgV0Qb-7y3rjrG67JOhMkijIJ05UmsyqXPdBmlrl4IaJhWLU4ri-XLt5cFDUt44Mn0znOPzIPjasH1Z9pJ3SxJc25AVTpOo93YxaQNvTFgt81eMcdQcrcwYrKSAwBt-RyRsTKxZwWSL1BLdHN5WbZRoPTWIBdbVlt-tnRh31MUbhwU-IkR6Kjwntma5g8XqazOCmX9KfSEE_szNly2IQ-DVKXmBF87vxnnorlo-xjXeuN0"/>
+</div>
+<div class="absolute inset-0 z-10" style="background-image: linear-gradient(rgba(0, 192, 255, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 192, 255, 0.15) 1px, transparent 1px); background-size: 50px 50px;"></div>
+<div class="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 z-20">
+<div class="w-48 h-48 border border-primary rounded-full radar-pulse opacity-50 shadow-[0_0_20px_#00C0FF]"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-2 border-primary rounded-full opacity-60 shadow-[0_0_15px_#00C0FF]"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-primary shadow-[0_0_10px_#00C0FF]"></div>
+<div class="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/90 px-3 py-1 text-[10px] font-mono text-primary border-l-4 border-primary shadow-neon-cyan">
+                    TARGET_LOCKED: ALPHA-01
+                </div>
+</div>
+<div class="absolute top-20 left-40 z-20 flex items-center gap-2">
+<div class="w-3 h-3 bg-white rotate-45 shadow-[0_0_10px_white]"></div>
+<span class="text-[10px] font-bold bg-black/80 px-2 py-0.5 border border-white/40 text-white">NEO_KOBE_DIST</span>
+</div>
+<div class="absolute bottom-40 right-60 z-20 flex items-center gap-2">
+<div class="w-3 h-3 bg-primary shadow-[0_0_10px_#00C0FF]"></div>
+<span class="text-[10px] font-bold bg-black/80 px-2 py-0.5 border border-primary/40 text-primary">SECTOR_V_PORTS</span>
+</div>
+<div class="absolute top-1/4 right-1/4 z-20 flex items-center gap-2">
+<div class="w-3 h-3 bg-secondary shadow-[0_0_10px_#FF0040]"></div>
+<span class="text-[10px] font-bold bg-black/80 px-2 py-0.5 border border-secondary/40 text-secondary">RESTRICTED_09</span>
+</div>
+<div class="absolute top-4 left-4 z-30 text-[10px] font-mono text-primary">
+<div class="flex gap-4 bg-black/60 p-1 px-2 border border-primary/20">
+<span>LAT: 34.0522</span>
+<span>LONG: -118.2437</span>
+<span>ALT: <span class="text-tertiary">450m</span></span>
+</div>
+</div>
+<div class="absolute bottom-4 right-4 z-30 text-[10px] font-mono text-primary flex flex-col items-end">
+<span class="bg-black/60 px-2 border border-primary/20 mb-1">SAT_VIEW: RE-TIME_LIVE</span>
+<span class="text-tertiary bg-black/60 px-2 border border-tertiary/20 drop-shadow-[0_0_5px_#00FF80]">ENCRYPTED_SIGNAL_STABLE</span>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-surface-container-high border border-primary/30 p-4 relative overflow-hidden shadow-neon-cyan">
+<div class="flex justify-between items-center mb-4">
+<span class="text-[10px] font-mono text-primary uppercase font-bold">RADAR_SWEEP_01</span>
+<span class="text-[8px] font-mono text-tertiary">A_Z: 284°</span>
+</div>
+<div class="aspect-square relative flex items-center justify-center border border-primary/20 rounded-full bg-black/40">
+<div class="absolute inset-0 rounded-full border border-primary/20"></div>
+<div class="absolute inset-[33%] rounded-full border border-primary/20"></div>
+<div class="absolute inset-[66%] rounded-full border border-primary/20"></div>
+<div class="w-full h-1 bg-gradient-to-r from-transparent to-primary absolute top-1/2 left-0 -translate-y-1/2 origin-right sweep opacity-80 shadow-[0_0_10px_#00C0FF]"></div>
+<span class="material-symbols-outlined text-primary/40 text-4xl">radar</span>
+<div class="absolute top-1/4 right-1/3 w-1.5 h-1.5 bg-secondary rounded-full shadow-[0_0_10px_#FF0040]"></div>
+<div class="absolute bottom-1/4 left-1/2 w-1.5 h-1.5 bg-tertiary rounded-full shadow-[0_0_10px_#00FF80]"></div>
+</div>
+</div>
+<div class="bg-surface-container-high border border-tertiary/30 p-4 shadow-neon-lime">
+<span class="text-[10px] font-mono text-tertiary uppercase block mb-4 font-bold">BIT_STREAM_REALTIME</span>
+<div class="flex items-end gap-[2px] h-20">
+<div class="bg-tertiary/30 flex-1 h-[20%]"></div>
+<div class="bg-tertiary/50 flex-1 h-[40%]"></div>
+<div class="bg-tertiary flex-1 h-[80%] shadow-[0_0_10px_#00FF80]"></div>
+<div class="bg-tertiary/60 flex-1 h-[50%]"></div>
+<div class="bg-tertiary/40 flex-1 h-[30%]"></div>
+<div class="bg-tertiary flex-1 h-[90%] shadow-[0_0_10px_#00FF80]"></div>
+<div class="bg-tertiary/50 flex-1 h-[60%]"></div>
+<div class="bg-tertiary flex-1 h-[100%] shadow-[0_0_15px_#00FF80]"></div>
+<div class="bg-tertiary/40 flex-1 h-[40%]"></div>
+<div class="bg-tertiary flex-1 h-[70%] shadow-[0_0_10px_#00FF80]"></div>
+</div>
+</div>
+<div class="bg-surface-container-high border border-primary/20 p-4 h-48 overflow-hidden relative shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+<span class="text-[10px] font-mono text-primary uppercase block mb-2 font-bold">SYSTEM_LOGS</span>
+<div class="text-[9px] font-mono text-slate-400 space-y-1">
+<p><span class="text-primary font-bold">[12:44:01]</span> UPLINK_ESTABLISHED</p>
+<p><span class="text-primary font-bold">[12:44:05]</span> PACKET_098_SYNC_SUCCESS</p>
+<p><span class="text-secondary font-bold">[12:44:12]</span> WARNING: MINOR_DRIFT_02</p>
+<p><span class="text-primary font-bold">[12:44:15]</span> AUTH_TOKEN_RENEWED</p>
+<p><span class="text-tertiary font-bold">[12:44:22]</span> SCANNING_MUNICIPALITY_05</p>
+<p><span class="text-primary font-bold">[12:44:28]</span> DATA_POINT_ALPHA_CAPTURED</p>
+<p><span class="text-slate-600">[12:44:30]</span> IDLE_ROUTINE_01_ACTIVE</p>
+<p><span class="text-primary font-bold">[12:44:35]</span> RE-CALIBRATING_SENSORS...</p>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-surface-container-high to-transparent"></div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+<div class="bg-surface-container-low border border-primary/20 p-4 shadow-[0_0_8px_rgba(0,192,255,0.1)]">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-primary text-xl drop-shadow-[0_0_5px_#00C0FF]">thermostat</span>
+<span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">TEMPERATURE</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-white drop-shadow-[0_0_8px_#00C0FF]">24.2</span>
+<span class="text-sm font-mono text-primary font-bold">°C</span>
+</div>
+<div class="w-full bg-slate-900 h-1.5 mt-4">
+<div class="h-full bg-primary shadow-[0_0_10px_#00C0FF]" style="width: 48%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-primary/20 p-4 shadow-[0_0_8px_rgba(0,192,255,0.1)]">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-secondary text-xl drop-shadow-[0_0_5px_#FF0040]">water_drop</span>
+<span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">HUMIDITY</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-white drop-shadow-[0_0_8px_#FF0040]">62</span>
+<span class="text-sm font-mono text-secondary font-bold">%</span>
+</div>
+<div class="w-full bg-slate-900 h-1.5 mt-4">
+<div class="h-full bg-secondary shadow-[0_0_10px_#FF0040]" style="width: 62%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-primary/20 p-4 shadow-[0_0_8px_rgba(0,192,255,0.1)]">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-tertiary text-xl drop-shadow-[0_0_5px_#00FF80]">compress</span>
+<span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">PRESSURE</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-white drop-shadow-[0_0_8px_#00FF80]">1012</span>
+<span class="text-sm font-mono text-tertiary font-bold">hPa</span>
+</div>
+<div class="w-full bg-slate-900 h-1.5 mt-4">
+<div class="h-full bg-tertiary shadow-[0_0_10px_#00FF80]" style="width: 75%;"></div>
+</div>
+</div>
+<div class="bg-surface-container-low border border-primary/20 p-4 shadow-[0_0_8px_rgba(0,192,255,0.1)]">
+<div class="flex items-center gap-3 mb-3">
+<span class="material-symbols-outlined text-primary text-xl drop-shadow-[0_0_5px_#00C0FF]">air</span>
+<span class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">WIND_SPEED</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-2xl font-bold text-white drop-shadow-[0_0_8px_#00C0FF]">12.5</span>
+<span class="text-sm font-mono text-primary font-bold">KM/H</span>
+</div>
+<div class="w-full bg-slate-900 h-1.5 mt-4">
+<div class="h-full bg-primary shadow-[0_0_10px_#00C0FF]" style="width: 30%;"></div>
+</div>
+</div>
+</div>
+</main>
+<div class="scanline"></div>
+
+</body></html>
